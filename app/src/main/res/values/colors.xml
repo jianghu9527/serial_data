@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="text_color">#3a3a3a</color>
+    <color name="bg_three">#3f3f3f</color>
+    <color name="actionsheet_gray">#8F8F8F</color>
+    <color name="actionsheet_red">#C68166</color>
+
+    <color name="textviewmaincolor">#1A1A1A</color>
+
+    <color name="red">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="bottom_upload">#11f47500</color>
+    <color name="main_bg_line">#aeaadc</color>
+
+    <color name="colorDivision">#33aaaaaa</color>
+
+    <color name="black">#000000</color>
+    <color name="face_main_bg">#475586</color>
+    <color name="face_middlers_bg">#5B6893</color>
+    <color name="button_bg">#819E82</color>
+    <color name="crimson">#DC143C</color>
+
+</resources>

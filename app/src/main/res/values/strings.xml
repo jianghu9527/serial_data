@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">麦克风21</string>
+    <string name="helper">"demo示例为输入命令，调用对应的函数，可以简单熟悉麦克风相关的基本功能，如:\n"
+        "1命令，获取麦克风的工作状态，若麦克风未启动，则麦克风会自动启动至工作状态\n"
+        "2命令，开启降噪音频录音功能，执行该命令前请务必保持设备为唤醒状态\n"
+        "3命令，停止降噪音频录音功能,在指定的路径中保存音频文件\n"
+        "4命令，开启原始音频录音功能，执行该命令前请务必保持设备为唤醒状态\n"
+        "5命令，停止原始音频录音功能,在指定的路径保存音频文件\n"
+        "6命令，同时开启降噪音频和原始音频录音功能，执行该命令前请务必保持设备为唤醒状态\n"
+        "7命令，同时停止降噪音频和原始音频录音功能，在指定的路径保存音频文件\n"
+        "8命令，设置主麦id\n"
+        "9命令, 获取主麦克风id\n"
+        "10命令,点亮和关闭灯光\n"
+        "11命令,设置自定义唤醒词\n"
+    </string>
+
+    <string name="mic_cmd_1_initialize">初始化麦克风</string>
+    <string name="mic_cmd_2_start_record_denoised">开启降噪音频录音功能，执行该命令前请务必保持设备为唤醒状态</string>
+    <string name="mic_cmd_3_stop_record_denoised">停止降噪音频录音功能,在指定的路径中保存音频文件</string>
+    <string name="mic_cmd_4_start_record_original">开启原始音频录音功能，执行该命令前请务必保持设备为唤醒状态</string>
+    <string name="mic_cmd_5_stop_record_original">停止原始音频录音功能,在指定的路径保存音频文件</string>
+    <string name="mic_cmd_6_start_record_both">同时开启降噪音频和原始音频录音功能，执行该命令前请务必保持设备为唤醒状态</string>
+    <string name="mic_cmd_7_stop_record_both">同时停止降噪音频和原始音频录音功能，在指定的路径保存音频文件</string>
+    <string name="mic_cmd_8_set_mic_id">设置主麦id(0–5)</string>
+    <string name="mic_cmd_9_get_mic_id">获取主麦克风id</string>
+    <string name="mic_cmd_10_set_led_on">点亮和关闭灯光</string>
+    <string name="mic_cmd_11_set_wakeup_word">设置自定义唤醒词(4–6个汉字)</string>
+    <string name="mic_cmd_12_deinitialize">停止使用麦克风</string>
+
+</resources>
