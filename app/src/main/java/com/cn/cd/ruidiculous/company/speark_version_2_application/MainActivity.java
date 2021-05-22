@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +16,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.azhon.serialport.ReceiveDataListener;
 import com.azhon.serialport.SerialPortPlus;
@@ -27,6 +31,7 @@ import java.io.LineNumberReader;
 import java.util.Arrays;
 import java.util.Base64;
 
+import cn.wch.ch34xuartdriver.CH34xUARTDriver;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 
@@ -38,13 +43,15 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     private static final String FILENAME_PCM_DENOISED = "/vvui/audio/mic_demo_vvui_denoised.pcm";
     private static final String FILENAME_PCM_ORIGINAL = "/vvui/audio/mic_demo_vvui_original.pcm";
     private static final String TAG = "------串口-------";
+    private static final String ACTION_USB_PERMISSION = "cn.wch.wchusbdriver.USB_PERMISSION";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Example of a call sto a native method
+        CH34XInitDevice();
         TextView tv = findViewById(R.id.tv_sample);
         tv.setText(NativeVvui.stringFromJNI());
 
@@ -53,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     public void vvuiInitialize(View view) {
         NativeVvui.registerListener(this);
         NativeVvui.initialize(getAssets());
+
+        Toast.makeText(MainActivity.this, "初始化麦克风",
+                Toast.LENGTH_SHORT).show();
     }
     Boolean  iseyee=true;
     /**
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         }else {
             iseyee=true;
         }
-        padom(iseyee);
+//        padom(iseyee);
     }
     /**
      * 测试byte
@@ -78,15 +88,13 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     public void bytetest(View view){
         Log.d("-----------","-----测试byte-----");
 //        byte [] mtest=   Common.Companion.getKill_callpolice_open();
-        byte [] mtest=   Common.Companion.getKill_callpolice_open();
-//        Log.d("","------------测试byte--1----"+mtest);
-//        Log.d("","------------测试byte----2--"+ Arrays.toString(mtest));
-
-         byte[]  mbyte  =SerialPortUtil.toLH(135);
-        Log.d("-----------","------------测试byte--1----"+mbyte);
-        Log.d("-----------","------------测试byte--2----"+SerialPortUtil.toInt(mbyte));
-        Log.d("-----------","------------测试byte--3----"+SerialPortUtil.toInt(mtest));
-        Log.d("-----------","------------测试byte--4----"+mtest.length);
+//        byte [] mtest=   Common.Companion.getKill_callpolice_open();
+//
+//         byte[]  mbyte  =SerialPortUtil.toLH(135);
+//        Log.d("-----------","------------测试byte--1----"+mbyte);
+//        Log.d("-----------","------------测试byte--2----"+SerialPortUtil.toInt(mbyte));
+//        Log.d("-----------","------------测试byte--3----"+SerialPortUtil.toInt(mtest));
+//        Log.d("-----------","------------测试byte--4----"+mtest.length);
         byte []  cesi=new byte[9];
 
         cesi[0]= (byte)181;//b5   181 帧头
@@ -99,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         cesi[7]= (byte)13;  //0D 13;   帧尾
         cesi[8]= (byte)10;  //0A  10;  帧尾
 
+
+        Log.d("-----------","------------测试byte--4--角度--"+35);
         Log.d("-----------","------------测试byte--5----"+cesi.length);
         Log.d("-----------","------------测试byte--6----"+Integer.toHexString(181).getBytes()[0]);
         Log.d("-----------","------------测试byte--7----"+new String(Integer.toHexString(181).getBytes()));
@@ -106,6 +116,48 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         Log.d("-----------","------------测试byte--9----"+SerialPortUtil.byte2Int(cesi[0])  );
 
         startAngle(cesi);
+
+    }
+
+
+    /**
+     * 转动方向
+     * @param aglent  角度
+     * @param Direction  方向
+     */
+    public void DirectionAglent(AngleBean aglent){
+        byte []  cesi=new byte[9];
+
+        cesi[0]= (byte)181;//b5   181 帧头
+        cesi[1]= (byte)91;  //5b  91   帧头
+        cesi[2]= (byte)3;  //03  3    有效位数
+        cesi[3]= (byte)1;  //01  1;  方向
+        cesi[4]= (byte)aglent.Angle;  //01  1;   角度
+        cesi[5]= (byte)1;  //01  1;   转速
+        cesi[6]= (byte)1;  //01  1;   效验
+        cesi[7]= (byte)13;  //0D 13;   帧尾
+        cesi[8]= (byte)10;  //0A  10;  帧尾
+
+
+        Log.d("-----------","------------测试byte--4--角度--"+35);
+        Log.d("-----------","------------测试byte--5----"+cesi.length);
+        Log.d("-----------","------------测试byte--6----"+Integer.toHexString(181).getBytes()[0]);
+        Log.d("-----------","------------测试byte--7----"+new String(Integer.toHexString(181).getBytes()));
+        Log.d("-----------","------------测试byte--8----"+SerialPortUtil.toInt(cesi));
+        Log.d("-----------","------------测试byte--9----"+SerialPortUtil.byte2Int(cesi[0])  );
+
+        startAngle(cesi);
+
+
+    }
+
+    /**
+     * ch34x
+     * @param view
+     */
+    public void ch34x(View view){
+
+        startActivity(new Intent(this, MainCH34XActivity.class));
 
     }
 
@@ -138,6 +190,11 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     public void vvuiSetMajorMicId(View view) {
          NativeVvui.setMajorMicId(3);
 //        Log.d("","------------设置主麦id----setMajorMicId--"+id);
+        Toast.makeText(MainActivity.this, "设置主麦id(0–5)",
+                Toast.LENGTH_SHORT).show();
+
+
+
     }
 
     /**
@@ -152,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     }
 
     public void vvuiSetAwakeWord(View view) {
-        NativeVvui.setAwakeWords("小明小明");
+        NativeVvui.setAwakeWords("小睿小睿");//小明小明
     }
 
     @Override
@@ -161,10 +218,15 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
                 " status=" + status + ", msg=" + msg);
 
         if (modId == 0xff) {
-            Log.d(LOG_TAG, "-----------测试--------"+msg);
-
+            Log.d(LOG_TAG, "-----------测试----角度->>>>>---"+msg);
         }
-        getModidAngle(msg);
+        /**
+         * 获取角度
+         */
+        Message  msge=new Message();
+        msge.obj=msg;
+        msge.what=1;
+        mhandler.sendMessage(msge);
     }
 
     @Override
@@ -211,16 +273,8 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         }
     }
 
-    /**
-     * 获取角度
-     */
-    public void getModidAngle(String text){
 
-        Message  msg=new Message();
-        msg.obj=text;
-        msg.what=1;
-        mhandler.sendMessage(msg);
-    }
+
 
     Handler  mhandler=new Handler(){
         @Override
@@ -235,10 +289,14 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
                         String Angle=      (String) mspliter[1].subSequence(7, mspliter[1].length());
 
                         new TextToSpeechUtil(MainActivity.this).speechStart("角度:"+Angle);
-                        Log.d("-------","----------角度---获取-----"+Angle);
+                        Log.d("-------","----------角度---获取--计算前---"+Angle);
+                        Log.d("---------","-----角度------"+SerialPortUtil.getAngleBean(Integer.valueOf(Angle)));
 
-     Log.d("---------","-----角度------"+SerialPortUtil.getAngleBean(Integer.valueOf(Angle)));
+                        DirectionAglent(SerialPortUtil.getAngleBean(Integer.valueOf(Angle)));
+
                     }
+
+
                     break;
             }
         }
@@ -255,70 +313,157 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     public void startAngle(byte[]  value){
 
         Log.d("---------------","-----测试byte--------send---"+ ByteBufUtil.hexDump(value).toUpperCase());
-        try {
-            //    /dev/ttyXRM0   /dev/ttyXRM1   /dev/ttyFIQ0   CH34x
-            //  /dev/ttyS0 0-4     /dev/ttyUSB0 0-3  /dev/ttySCA0  0-2
 
-//            path="/dev/ttyXRM0"
-//            path="/dev/ttyXRM1"
-//            path="/dev/ttyS4"
-//            path="/dev/ttyUSB1"
-//            path="/dev/ttyUSB0"
-//            /dev/ttyUSB10  //叶帅
+        byte[] to_send = value;
+        int retval = BaseAlication.driver.WriteData(to_send, to_send.length);//写数据，第一个参数为需要发送的字节数组，第二个参数为需要发送的字节长度，返回实际发送的字节长度
 
-            SerialPortPlus mserialPortPlus=new SerialPortPlus("/system/bin/su/CH34x",115200);
-            mserialPortPlus.writeAndFlush(value);
-
-            mserialPortPlus.setReceiveDataListener(new ReceiveDataListener() {
-                @Override
-                public void receiveData(ByteBuf byteBuf) {
-
-              String dats=      ByteBufUtil.hexDump(byteBuf).toUpperCase();
-              Log.d("--------------------","---------测试byte---------开始转向----返回数据------"+dats);
-              Log.d("--------------------","---------测试byte---------开始转向--------"+dats);
+        Log.d("---------------","--------写入---返回实际发--2--"+retval);
+        if (retval < 0)
+            Toast.makeText(MainActivity.this, "写失败!",
+                    Toast.LENGTH_SHORT).show();
 
 
-                }
-            });
 
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
+    private Handler handler;
+    public int baudRate = 115200;//波特率
+
+    public byte stopBit = 1;//停止位
+    public byte dataBit= 8;//数据位
+    public byte parity  = 0;//奇偶校验位
+    public byte flowControl = 0;//停止位
     /**
-     * 熊猫
-     * @param
+     * 初始化 CH34X
      */
-    public void padom(Boolean  iseye){
-        String  eye="";
-        if(iseye){
-            eye="OPEN";
-        }else{
-            eye="CLOSE";
+    public void CH34XInitDevice(){
+
+        BaseAlication.driver = new CH34xUARTDriver(
+                (UsbManager) getSystemService(Context.USB_SERVICE), this,
+                ACTION_USB_PERMISSION);
+
+        if (!BaseAlication.driver.UsbFeatureSupported())// 判断系统是否支持USB HOST
+        {
+            Log.d("--------------","----------写入-------您的手机不支持USB HOST，请更换其他手机再试！");
         }
-        Log.d("----------------","--------熊猫---1-----"+eye);
-        try {
-            //    /dev/ttyXRM0    /dev/ttyFIQ0
-            SerialPortPlus mserialPortPlus=new SerialPortPlus("/dev/ttyUSB0",115200);
-//            mserialPortPlus.writeAndFlush(eye.getBytes());
+        BaseAlication.isOpen_CH34X = false;
 
-            mserialPortPlus.setReceiveDataListener(new ReceiveDataListener() {
-                @Override
-                public void receiveData(ByteBuf byteBuf) {
-                    String dats=      ByteBufUtil.hexDump(byteBuf).toUpperCase();
-                    Log.d("--------------------","--------熊猫-----2-----"+dats);
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
 
+//                ByteBufUtil.hexDump(value).toUpperCase()
+                String  data =(String) msg.obj;
+                String Angledatas=    data.substring(12, 14);
+                int Angles= SerialPortUtil.toInt(Angledatas.getBytes());
+
+                Log.d("---------------","-------写入------转头返回数据---0----"+data);
+                Log.d("---------------","-------写入------转头返回数据----1----"+Angledatas);
+
+//                SerialPortUtil.subBytes();
+
+
+            }
+        };
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initCh34x();
+            }
+        },2000);
+
+
+
+
+
+    }
+
+    private class readThread extends Thread {
+
+        public void run() {
+
+            byte[] buffer = new byte[64];
+            while (true) {
+                Message msg = Message.obtain();
+                if (!BaseAlication.isOpen_CH34X) {
+                    break;
                 }
-            });
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+                int length = BaseAlication.driver.ReadData(buffer, 64);
+                if (length > 0) {
+                    String recv =new SerialPortUtil(MainActivity.this).toHexString(buffer, length);
+                    Log.d("---------------","--------写入---返回实际发--1--"+recv);
+                    msg.obj = recv;
+                    handler.sendMessage(msg);
+                }
+            }
         }
     }
 
 
+   void  initCh34x(){
+
+
+       boolean isConnect=  BaseAlication.driver.isConnected();
+       Log.d("----------------","------------是否连接---CH34X------"+isConnect);
+       if(!isConnect){
+
+           if (!BaseAlication.isOpen_CH34X) {
+               if (BaseAlication.driver!=null&&!BaseAlication.driver.ResumeUsbList())// ResumeUsbList方法用于枚举CH34X设备以及打开相关设备
+               {
+                   Toast.makeText(MainActivity.this, "打开设备失败!",
+                           Toast.LENGTH_SHORT).show();
+                   BaseAlication.driver.CloseDevice();
+                   Log.d("----------------","----------------打开设备失败------1----");
+               } else {
+                   if (!BaseAlication.driver.UartInit()) {  //对串口设备进行初始化操作
+                       Toast.makeText(MainActivity.this, "设备初始化失败!",
+                               Toast.LENGTH_SHORT).show();
+                       Toast.makeText(MainActivity.this, "打开" +
+                                       "设备失败!",
+                               Toast.LENGTH_SHORT).show();
+                       Log.d("----------------","----------------设备初始化失败----2------");
+                       return;
+                   }
+                   Toast.makeText(MainActivity.this, "打开设备成功!",
+                           Toast.LENGTH_SHORT).show();
+                   BaseAlication.isOpen_CH34X = true;
+                   new MainActivity.readThread().start();//开启读线程读取串口接收的数据
+                   Log.d("----------------","----------------打开设备成功----------");
+               }
+           } else {
+               BaseAlication.driver.CloseDevice();
+               BaseAlication.isOpen_CH34X = false;
+               Log.d("----------------","----------------打开设备成功----关闭------");
+           }
+
+
+
+           if (BaseAlication.driver!=null&&BaseAlication.driver.isConnected()){
+
+               if (BaseAlication.driver.SetConfig(baudRate, dataBit, stopBit, parity,//配置串口波特率，函数说明可参照编程手册
+                       flowControl)) {
+                   Toast.makeText(MainActivity.this, "串口设置成功!",
+                           Toast.LENGTH_SHORT).show();
+                   Log.d("----------------","----------------串口设置成功---1----");
+               } else {
+                   Toast.makeText(MainActivity.this, "串口设置失败!",
+                           Toast.LENGTH_SHORT).show();
+                   Log.d("----------------","----------------串口设置失败---1----");
+               }
+
+           }else{
+               Log.d("----------------","----------------打开失败---999----");
+           }
+       }
+
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BaseAlication.isOpen_CH34X=false;
+    }
 }

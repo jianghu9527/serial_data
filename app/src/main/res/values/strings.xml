@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">麦克风21</string>
+    <string name="app_name">麦克风CH34x</string>
     <string name="helper">"demo示例为输入命令，调用对应的函数，可以简单熟悉麦克风相关的基本功能，如:\n"
         "1命令，获取麦克风的工作状态，若麦克风未启动，则麦克风会自动启动至工作状态\n"
         "2命令，开启降噪音频录音功能，执行该命令前请务必保持设备为唤醒状态\n"
@@ -26,5 +26,78 @@
     <string name="mic_cmd_10_set_led_on">点亮和关闭灯光</string>
     <string name="mic_cmd_11_set_wakeup_word">设置自定义唤醒词(4–6个汉字)</string>
     <string name="mic_cmd_12_deinitialize">停止使用麦克风</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="baudRate">Baud rate</string>
+    <string name="baud_rate_str">Baud rate</string>
+    <string name="stop_bit">StopBits</string>
+    <string name="data_bit">DataBits</string>
+    <string name="parity_str">Parity</string>
+    <string name="flow">Flow</string>
+    <!--   <string name="time_out_str">TimeOut</string>   -->
+    <string name="config">Config</string>
+    <string name="read_bytes">Read Bytes</string>
+    <string name="write_bytes">Write Bytes</string>
+    <string name="write">Write</string>
+    <string name="open">Open</string>
+    <string name="clear">Clear</string>
+    <string name="hint">Hex Input</string>
+
+    <string-array name="baud_rate">
+        <item>300</item>
+        <item>600</item>
+        <item>1200</item>
+        <item>2400</item>
+        <item>4800</item>
+        <item>9600</item>
+        <item>19200</item>
+        <item>38400</item>
+        <item>57600</item>
+        <item>115200</item>
+        <item>230400</item>
+        <item>460800</item>
+        <item>921600</item>
+    </string-array>
+
+    <string-array name="stop_bits">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="data_bits">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="parity">
+        <item>None</item>
+        <item>Odd</item>
+        <item>Even</item>
+        <item >Mark</item>
+        <item >Space</item>
+    </string-array>
+
+    <string-array name="flow_control">
+        <item>None</item>
+        <item>CTS/RTS</item>
+    </string-array>
 
 </resources>
