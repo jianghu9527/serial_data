@@ -17,6 +17,7 @@
 package android_serialport_api;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -39,7 +40,8 @@ public class SerialPort {
     /**
      * 有些设备su路径是/system/xbin/su
      */
-    private static String mSuPath = "/system/bin/su";
+//    private static String mSuPath = "/system/bin/su";
+    private static String mSuPath = "/system/xbin/su";
 
     public static void setSuPath(String suPath) {
         if (TextUtils.isEmpty(suPath)) {
@@ -54,17 +56,22 @@ public class SerialPort {
         if (!device.canRead() || !device.canWrite()) {
             try {
                 /* Missing read/write permission, trying to chmod the file */
-                Process su;
+                Process su;;
+//                su=Runtime.getRuntime().exec("/system/xbin/su");
                 su = Runtime.getRuntime().exec(mSuPath);
-                String cmd = "chmod 666 " + device.getAbsolutePath() + "\n"
+                Log.d("-----------","----------------SerialPort------555--/system/bin/su----"+mSuPath);
+                Log.d("-----------","----------------SerialPort------555--/system/bin/su----"+device.getAbsolutePath());
+                String cmd = "chmod 777 " + device.getAbsolutePath() + "\n"
                         + "exit\n";
                 su.getOutputStream().write(cmd.getBytes());
                 if ((su.waitFor() != 0) || !device.canRead()
                         || !device.canWrite()) {
+                    Log.d("-----------","----------------SerialPort------666------");
                     throw new SecurityException();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d("-----------","----------------SerialPort------777------"+e.getMessage());
                 throw new SecurityException();
             }
         }

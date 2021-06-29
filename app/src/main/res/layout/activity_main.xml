@@ -22,104 +22,175 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginVertical="@dimen/margin_top"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_gravity="left"
         android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mic_cmd_1_initialize"
-            android:textColor="@color/colorAccent"
-            android:onClick="vvuiInitialize" />
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mic_cmd_2_start_record_denoised"
-          android:textColor="@color/colorAccent"
-            android:onClick="vvuiStartRecordDenoised" />
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mic_cmd_3_stop_record_denoised"
-            android:textColor="@color/colorAccent"
-            android:onClick="vvuiStopRecordDenoised" />
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mic_cmd_4_start_record_original"
-            android:textColor="@color/colorAccent"
-            android:onClick="vvuiStartRecordOriginal" />
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mic_cmd_5_stop_record_original"
-            android:textColor="@color/colorAccent"
-            android:onClick="vvuiStopRecordOriginal" />
-        <!--        <Button android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="@string/mic_cmd_6_start_record_both" />-->
-        <!--        <Button android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="@string/mic_cmd_7_stop_record_both" />-->
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:text="@string/mic_cmd_8_set_mic_id"
-            android:onClick="vvuiSetMajorMicId" />
-        <Button android:layout_width="match_parent"
-            android:textColor="@color/colorAccent"
-            android:layout_height="wrap_content"
-            android:text="@string/mic_cmd_9_get_mic_id"
-            android:onClick="vvuiGetMajorMicId" />
-        <!--        <Button android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="@string/mic_cmd_10_set_led_on" />-->
-        <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:text="@string/mic_cmd_11_set_wakeup_word"
-            android:onClick="vvuiSetAwakeWord" />
-        <Button android:layout_width="match_parent"
-            android:textColor="@color/colorAccent"
-            android:layout_height="wrap_content"
-            android:text="@string/mic_cmd_12_deinitialize"
-            android:onClick="vvuiDeinitialize" />
-
-
+        android:layout_height="match_parent">
 
         <Button android:layout_width="match_parent"
             android:textColor="@color/colorAccent"
             android:layout_height="wrap_content"
-            android:text="熊猫眼睛"
-            android:onClick="getchunakou" />
-
-
-        <Button
-            android:layout_width="wrap_content"
-            android:textColor="@color/white"
-            android:background="@color/button_bg"
+            android:text="存取"
+            android:id="@+id/saveMoney" />
+        <Button android:layout_width="match_parent"
+            android:textColor="@color/colorAccent"
             android:layout_height="wrap_content"
-            android:text="测试byte"
-            android:layout_gravity="center"
-            android:layout_margin="15dp"
-            android:onClick="bytetest" />
+            android:text="取取"
+            android:layout_margin="20dp"
+            android:id="@+id/getMoney" />
 
-        <EditText
-            android:id="@+id/number"
-            android:background="@color/black"
-            android:textColor="@color/white"
-            android:text="B55B03012301010D0A"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <Button
-
-            android:layout_width="wrap_content"
-            android:textColor="@color/white"
-            android:background="@color/button_bg"
+        <Button android:layout_width="match_parent"
+            android:textColor="@color/colorAccent"
             android:layout_height="wrap_content"
-            android:text="ch34x"
-            android:layout_gravity="center"
-            android:layout_margin="15dp"
-            android:onClick="ch34x" />
+            android:text="读取串口"
+            android:id="@+id/getchuankou" />
+
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="400dp"
+            android:layout_gravity="left"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <Button android:layout_width="match_parent"
+                android:textColor="@color/colorAccent"
+                android:layout_height="wrap_content"
+                android:text="熊猫测试"
+                android:onClick="getchunakou" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:background="@color/button_bg"
+                android:layout_height="wrap_content"
+                android:text="熊猫耳朵"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:onClick="PandaEarsData" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:background="@color/button_bg"
+                android:layout_height="wrap_content"
+                android:text="测试byte"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:onClick="bytetest" />
+
+            <EditText
+                android:id="@+id/number"
+                android:background="@color/black"
+                android:textColor="@color/white"
+                android:text="B55B03012301010D0A"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:background="@color/button_bg"
+                android:layout_height="wrap_content"
+                android:text="ch34x"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:onClick="ch34x" />
+            <Button
+
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:background="@color/button_bg"
+                android:layout_height="wrap_content"
+                android:text="tty串口"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:onClick="ttymethor" />
+
+
+
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_marginLeft="200dp"
+    android:layout_width="400dp"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+
+
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/mic_cmd_1_initialize"
+        android:textColor="@color/colorAccent"
+        android:onClick="vvuiInitialize" />
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/mic_cmd_2_start_record_denoised"
+        android:textColor="@color/colorAccent"
+        android:onClick="vvuiStartRecordDenoised" />
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/mic_cmd_3_stop_record_denoised"
+        android:textColor="@color/colorAccent"
+        android:onClick="vvuiStopRecordDenoised" />
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/mic_cmd_4_start_record_original"
+        android:textColor="@color/colorAccent"
+        android:onClick="vvuiStartRecordOriginal" />
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/mic_cmd_5_stop_record_original"
+        android:textColor="@color/colorAccent"
+        android:onClick="vvuiStopRecordOriginal" />
+    <!--        <Button android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="@string/mic_cmd_6_start_record_both" />-->
+    <!--        <Button android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="@string/mic_cmd_7_stop_record_both" />-->
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        android:text="@string/mic_cmd_8_set_mic_id"
+        android:onClick="vvuiSetMajorMicId" />
+    <Button android:layout_width="match_parent"
+        android:textColor="@color/colorAccent"
+        android:layout_height="wrap_content"
+        android:text="@string/mic_cmd_9_get_mic_id"
+        android:onClick="vvuiGetMajorMicId" />
+    <!--        <Button android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:text="@string/mic_cmd_10_set_led_on" />-->
+    <Button android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        android:text="@string/mic_cmd_11_set_wakeup_word"
+        android:onClick="vvuiSetAwakeWord" />
+    <Button android:layout_width="match_parent"
+        android:textColor="@color/colorAccent"
+        android:layout_height="wrap_content"
+        android:text="@string/mic_cmd_12_deinitialize"
+        android:onClick="vvuiDeinitialize" />
+            <Button android:layout_width="match_parent"
+                android:textColor="@color/colorAccent"
+                android:layout_height="wrap_content"
+                android:text="播放声音"
+                android:onClick="play" />
+</LinearLayout>
 
 
     </LinearLayout>

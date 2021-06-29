@@ -65,8 +65,8 @@ android {
 dependencies {
 
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation (name: 'sdk-debug', ext: 'aar')
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation (name: 'sdk_mic_six', ext: 'aar')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -80,6 +80,12 @@ dependencies {
     implementation project(path: ':serialport')
     implementation "androidx.core:core-ktx:+"
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
+
+    implementation 'com.google.protobuf:protobuf-java:3.8.0'
+    implementation 'com.google.protobuf:protobuf-java-util:3.8.0'
+
 
 }
 repositories {

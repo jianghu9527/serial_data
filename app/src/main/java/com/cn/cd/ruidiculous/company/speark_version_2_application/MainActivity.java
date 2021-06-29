@@ -24,6 +24,8 @@ import com.vvui.sdk.NativeVvui;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     private static final int DATA_TYPE_PCM_ORIGINAL = 1;
     private static final String FILENAME_PCM_DENOISED = "/vvui/audio/mic_demo_vvui_denoised.pcm";
     private static final String FILENAME_PCM_ORIGINAL = "/vvui/audio/mic_demo_vvui_original.pcm";
+    private static final String FILENAME_PCM_ORIGINALa = "/vvui/audio/a.wav";
+    private static final String FILENAME_PCM_ORIGINALa2 = "/vvui/audio/b.wav";
     private static final String TAG = "------串口-------";
     private static final String ACTION_USB_PERMISSION = "cn.wch.wchusbdriver.USB_PERMISSION";
 
@@ -51,35 +55,234 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CH34XInitDevice();
+//        CH34XInitDevice();
         TextView tv = findViewById(R.id.tv_sample);
         tv.setText(NativeVvui.stringFromJNI());
 
+        findViewById(R.id.getchuankou).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startAngleTest();
+                Toast.makeText(MainActivity.this, "读取串口",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        findViewById(R.id.saveMoney).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
+
+
+        findViewById(R.id.getMoney).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+            }
+        });
+
+
     }
 
+    public void startAngleTest(){
+
+
+        byte[] to_send = "1".getBytes();
+//        Log.d("---------------","-----开始转向----11----send---"+ ByteBufUtil.hexDump(to_send).toUpperCase());
+
+        SerialPortPlus serialPortPlus = null;
+        try {
+            serialPortPlus = new SerialPortPlus("/dev/ttyXRM1", 115200);
+            serialPortPlus.writeAndFlush(to_send);
+            serialPortPlus.setReceiveDataListener(new ReceiveDataListener() {
+                @Override
+                public void receiveData(ByteBuf byteBuf) {
+                    Log.d("------------","--------------开始转向--------1---"+byteBuf);
+                    String cases = ByteBufUtil.hexDump(byteBuf).toUpperCase();
+                    Log.d("------------","--------------开始转向------2-----"+cases);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    /**
+     * 设置唤醒词
+     * @param view
+     */
+    public void vvuiSetAwakeWord(View view) {
+        NativeVvui.setAwakeWords("小睿小睿");//小明小明
+    }
+
+    /**
+     * 设置主麦id(0–5)
+     * @param view
+     */
+    public void vvuiSetMajorMicId(View view) {
+        NativeVvui.setMajorMicId(3);
+//        Log.d("","------------设置主麦id----setMajorMicId--"+id);
+        Toast.makeText(MainActivity.this, "设置主麦id(0–5)",
+                Toast.LENGTH_SHORT).show();
+
+
+    }
+
+String filePathvoid;
+    /**
+     * 播放声音
+     * @param view
+     */
+    public void play(View view){
+
+//        File mfile=  new File(Environment.getExternalStorageDirectory().getAbsolutePath()+FILENAME_PCM_ORIGINALa
+//                ,Environment.getExternalStorageDirectory().getAbsolutePath()+FILENAME_PCM_ORIGINALa  );
+//        if (!mfile.exists()) {
+//            mfile.mkdirs();
+//        }
+//
+//        if (!mfile.exists()) {
+//            try {
+//                mfile.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("-----------------","---------播放声音-----111---"+filePathvoid);
+
+                AudioRecorderUtil.getInstance().copyWaveFile(Environment.getExternalStorageDirectory().getAbsolutePath()+FILENAME_PCM_ORIGINAL
+                        ,Environment.getExternalStorageDirectory().getAbsolutePath()+FILENAME_PCM_ORIGINALa);
+                AudioRecorderUtil.getInstance().copyWaveFile(Environment.getExternalStorageDirectory().getAbsolutePath()+FILENAME_PCM_DENOISED
+                        ,Environment.getExternalStorageDirectory().getAbsolutePath()+FILENAME_PCM_ORIGINALa2);
+//        copyWaveFile(filePathvoid);
+                Log.d("-----------------","---------播放声音-----55---"+filePathvoid);
+            }
+        }).start();
+//        Log.d("-----------------","---------播放声音-----66---"+mfile.getAbsolutePath());
+//        Log.d("-----------------","---------播放声音-----66---"+mfile.getAbsolutePath());
+    }
+
+    /**
+     * 停止使用
+     * @param view
+     */
+    public void vvuiDeinitialize(View view) {
+        int  ids=     NativeVvui.deinitialize();
+        Log.d("-----------","------------停止使用------"+ids);
+    }
+    /**
+     * 获取主麦克风id
+     * @param view
+     */
+    public void vvuiGetMajorMicId(View view) {
+        int    MicId=NativeVvui.getMajorMicId();
+
+        Log.d("---------------","-------------获取主麦克风id------"+MicId);
+    }
+
+
+    @Override
+    public void onEvent(int modId, int msgId, int status, String msg) {
+        Log.d(LOG_TAG, "-------------onEvent:===modId=" + modId + ", msgId=" + msgId + "," +
+                " status=" + status + ", msg=" + msg);
+
+
+        //常见status   0，30002，2，1     30002 设置主麦    0初始化     -2设置唤醒词
+        if (modId == 0xff) {
+            Log.d(LOG_TAG, "-----------测试----角度->>>>>-255--"+msg);
+        }
+        /**
+         * 获取角度
+         */
+        Message  msge=new Message();
+        msge.obj=msg;
+        msge.what=1;
+        mhandler.sendMessage(msge);
+    }
+
+    @Override
+    public void onData(int type, byte[] data) {
+        Log.d(LOG_TAG, "--------------onData: -------------" + type + "----, -----" + new String(data));
+
+        if (type == DATA_TYPE_PCM_DENOISED) {
+            writeFile(FILENAME_PCM_DENOISED, data);
+        } else if (type == DATA_TYPE_PCM_ORIGINAL) {
+            writeFile(FILENAME_PCM_ORIGINAL, data);
+        }
+    }
+
+    /**
+     * 初始化  麦克风
+     * @param view
+     */
     public void vvuiInitialize(View view) {
         NativeVvui.registerListener(this);
         NativeVvui.initialize(getAssets());
 
         Toast.makeText(MainActivity.this, "初始化麦克风",
                 Toast.LENGTH_SHORT).show();
+
+//        NativeVvui.registerListener(new NativeVvui.Listener() {
+//            @Override
+//            public void onEvent(int i, int i1, int i2, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onData(int i, byte[] bytes) {
+//
+//            }
+//        });
+
     }
+
+
+    public void vvuiStartRecordDenoised(View view) {
+        NativeVvui.startRecordDenoised();
+    }
+
+    public void vvuiStopRecordDenoised(View view) {
+        NativeVvui.stopRecordDenoised();
+    }
+
+    public void vvuiStartRecordOriginal(View view) {
+        NativeVvui.startRecordOriginal();
+    }
+
+    public void vvuiStopRecordOriginal(View view) {
+        NativeVvui.stopRecordOriginal();
+    }
+
+
     Boolean  iseyee=true;
     /**
      * 熊猫眼睛
      * @param view
      */
     public void getchunakou(View view){
-
          Log.d("---------------","-------熊猫眼睛---22-----");
-
 
         if (iseyee){
             iseyee=false;
         }else {
             iseyee=true;
         }
-//        padom(iseyee);
+        padom(iseyee);
+    }
+
+    public void PandaEarsData(View view){
+        getPandaEarsData();
     }
     /**
      * 测试byte
@@ -87,14 +290,7 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void bytetest(View view){
         Log.d("-----------","-----测试byte-----");
-//        byte [] mtest=   Common.Companion.getKill_callpolice_open();
-//        byte [] mtest=   Common.Companion.getKill_callpolice_open();
-//
-//         byte[]  mbyte  =SerialPortUtil.toLH(135);
-//        Log.d("-----------","------------测试byte--1----"+mbyte);
-//        Log.d("-----------","------------测试byte--2----"+SerialPortUtil.toInt(mbyte));
-//        Log.d("-----------","------------测试byte--3----"+SerialPortUtil.toInt(mtest));
-//        Log.d("-----------","------------测试byte--4----"+mtest.length);
+
         byte []  cesi=new byte[9];
 
         cesi[0]= (byte)181;//b5   181 帧头
@@ -115,7 +311,9 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         Log.d("-----------","------------测试byte--8----"+SerialPortUtil.toInt(cesi));
         Log.d("-----------","------------测试byte--9----"+SerialPortUtil.byte2Int(cesi[0])  );
 
-        startAngle(cesi);
+//        startAngle(cesi);
+//        SerialPort(cesi);
+
 
     }
 
@@ -123,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
     /**
      * 转动方向
      * @param aglent  角度
-     * @param Direction  方向
+     * @param    方向
      */
     public void DirectionAglent(AngleBean aglent){
         byte []  cesi=new byte[9];
@@ -156,89 +354,13 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
      * @param view
      */
     public void ch34x(View view){
-
         startActivity(new Intent(this, MainCH34XActivity.class));
-
     }
-
-    public void vvuiDeinitialize(View view) {
-   int  ids=     NativeVvui.deinitialize();
-        Log.d("-----------","------------停止使用------"+ids);
-    }
-
-    public void vvuiStartRecordDenoised(View view) {
-        NativeVvui.startRecordDenoised();
-    }
-
-    public void vvuiStopRecordDenoised(View view) {
-        NativeVvui.stopRecordDenoised();
-    }
-
-    public void vvuiStartRecordOriginal(View view) {
-        NativeVvui.startRecordOriginal();
-    }
-
-    public void vvuiStopRecordOriginal(View view) {
-        NativeVvui.stopRecordOriginal();
+    public void ttymethor(View view){
+        SerialPort();
     }
 
 
-    /**
-     * 设置主麦id(0–5)
-     * @param view
-     */
-    public void vvuiSetMajorMicId(View view) {
-         NativeVvui.setMajorMicId(3);
-//        Log.d("","------------设置主麦id----setMajorMicId--"+id);
-        Toast.makeText(MainActivity.this, "设置主麦id(0–5)",
-                Toast.LENGTH_SHORT).show();
-
-
-
-    }
-
-    /**
-     * 获取主麦克风id
-     * @param view
-     */
-    public void vvuiGetMajorMicId(View view) {
-        NativeVvui.getMajorMicId();
-
-//     int id=   NativeVvui.getMajorMicId();
-//        Log.d("","------------获取主麦克风id------"+id);
-    }
-
-    public void vvuiSetAwakeWord(View view) {
-        NativeVvui.setAwakeWords("小睿小睿");//小明小明
-    }
-
-    @Override
-    public void onEvent(int modId, int msgId, int status, String msg) {
-        Log.d(LOG_TAG, "-------------onEvent:===modId=" + modId + ", msgId=" + msgId + "," +
-                " status=" + status + ", msg=" + msg);
-
-        if (modId == 0xff) {
-            Log.d(LOG_TAG, "-----------测试----角度->>>>>---"+msg);
-        }
-        /**
-         * 获取角度
-         */
-        Message  msge=new Message();
-        msge.obj=msg;
-        msge.what=1;
-        mhandler.sendMessage(msge);
-    }
-
-    @Override
-    public void onData(int type, byte[] data) {
-        Log.d(LOG_TAG, "--------------onData: " + type + ", " + data.length);
-
-        if (type == DATA_TYPE_PCM_DENOISED) {
-            writeFile(FILENAME_PCM_DENOISED, data);
-        } else if (type == DATA_TYPE_PCM_ORIGINAL) {
-            writeFile(FILENAME_PCM_ORIGINAL, data);
-        }
-    }
 
     private void writeFile(String filename, byte[] data) {
         filename = Environment.getExternalStorageDirectory().getPath() + filename;
@@ -246,7 +368,9 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         File file = new File(filename);
         File parent = file.getParentFile();
 
-        Log.d("","-------------writeFile-----------"+parent.getAbsolutePath());
+        Log.d("","-------------writeFile------1-----"+filename.toString());
+        Log.d("","-------------writeFile------2-----"+parent.getAbsolutePath().toString());
+        filePathvoid=file.getAbsolutePath();
         DataOutputStream dos = null;
         try {
             assert parent != null;
@@ -289,10 +413,10 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
                         String Angle=      (String) mspliter[1].subSequence(7, mspliter[1].length());
 
                         new TextToSpeechUtil(MainActivity.this).speechStart("角度:"+Angle);
-                        Log.d("-------","----------角度---获取--计算前---"+Angle);
-                        Log.d("---------","-----角度------"+SerialPortUtil.getAngleBean(Integer.valueOf(Angle)));
+                        Log.d("-------","-------获取--计算前---"+Angle);
+                        Log.d("---------","-----"+SerialPortUtil.getAngleBean(Integer.valueOf(Angle)));
 
-                        DirectionAglent(SerialPortUtil.getAngleBean(Integer.valueOf(Angle)));
+//                        DirectionAglent(SerialPortUtil.getAngleBean(Integer.valueOf(Angle)));
 
                     }
 
@@ -321,9 +445,6 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
         if (retval < 0)
             Toast.makeText(MainActivity.this, "写失败!",
                     Toast.LENGTH_SHORT).show();
-
-
-
     }
 
 
@@ -359,10 +480,7 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
 
                 Log.d("---------------","-------写入------转头返回数据---0----"+data);
                 Log.d("---------------","-------写入------转头返回数据----1----"+Angledatas);
-
 //                SerialPortUtil.subBytes();
-
-
             }
         };
 
@@ -372,11 +490,6 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
                 initCh34x();
             }
         },2000);
-
-
-
-
-
     }
 
     private class readThread extends Thread {
@@ -402,7 +515,6 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
 
 
    void  initCh34x(){
-
 
        boolean isConnect=  BaseAlication.driver.isConnected();
        Log.d("----------------","------------是否连接---CH34X------"+isConnect);
@@ -437,10 +549,7 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
                Log.d("----------------","----------------打开设备成功----关闭------");
            }
 
-
-
            if (BaseAlication.driver!=null&&BaseAlication.driver.isConnected()){
-
                if (BaseAlication.driver.SetConfig(baudRate, dataBit, stopBit, parity,//配置串口波特率，函数说明可参照编程手册
                        flowControl)) {
                    Toast.makeText(MainActivity.this, "串口设置成功!",
@@ -451,19 +560,107 @@ public class MainActivity extends AppCompatActivity implements NativeVvui.Listen
                            Toast.LENGTH_SHORT).show();
                    Log.d("----------------","----------------串口设置失败---1----");
                }
-
            }else{
                Log.d("----------------","----------------打开失败---999----");
            }
        }
-
-
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         BaseAlication.isOpen_CH34X=false;
+    }
+
+
+    /**
+     * 熊猫
+     * @param
+     */
+    public void padom(Boolean  iseye){
+        String  eye="";
+        if(iseye){
+            eye="OPEN";
+        }else{
+            eye="CLOSE";
+        }
+        Log.d("----------------","--------熊猫--->>>>>>>----"+eye);
+        try {
+            //    /dev/ttyXRM0    /dev/ttyFIQ0
+            SerialPortPlus mserialPortPlus=new SerialPortPlus("/dev/ttyUSB0",115200);
+//            mserialPortPlus.writeAndFlush(eye.getBytes());
+
+            mserialPortPlus.setReceiveDataListener(new ReceiveDataListener() {
+                @Override
+                public void receiveData(ByteBuf byteBuf) {
+                    String dats=      ByteBufUtil.hexDump(byteBuf).toUpperCase();
+                    Log.d("--------------------","--------熊猫-----<<<<<<-----"+dats);
+
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void  getPandaEarsData(){
+        try {
+            //    /dev/ttyXRM0    /dev/ttyFIQ0
+            SerialPortPlus mserialPortPlus=new SerialPortPlus("/dev/ttyUSB0",115200);
+//            mserialPortPlus.writeAndFlush(eye.getBytes());
+
+            mserialPortPlus.setReceiveDataListener(new ReceiveDataListener() {
+                @Override
+                public void receiveData(ByteBuf byteBuf) {
+                    String dats=      ByteBufUtil.hexDump(byteBuf).toUpperCase();
+                    Log.d("--------------------","--------熊猫---尾巴数据--<<<<<<-----"+dats);
+
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 串口数据
+     */
+    public void SerialPort(){
+        byte []  cesi=new byte[9];
+
+        cesi[0]= (byte)181;//b5   181 帧头
+        cesi[1]= (byte)91;  //5b  91   帧头
+        cesi[2]= (byte)3;  //03  3    有效位数
+        cesi[3]= (byte)1;  //01  1;  方向
+        cesi[4]= (byte)35;  //01  1;   角度
+        cesi[5]= (byte)1;  //01  1;   转速
+        cesi[6]= (byte)1;  //01  1;   效验
+        cesi[7]= (byte)13;  //0D 13;   帧尾
+        cesi[8]= (byte)10;  //0A  10;  帧尾
+        try {
+//            Log.d("-----------","------------串口数据--8----"+SerialPortUtil.toInt(cesi));
+            Log.d("---------------","-----串口数据----->>>>>>------"+ ByteBufUtil.hexDump(cesi).toUpperCase());
+            SerialPortPlus mserialPortPlus=new SerialPortPlus("/dev/ttyS4",115200);
+            mserialPortPlus.writeAndFlush(cesi);
+
+            mserialPortPlus.setReceiveDataListener(new ReceiveDataListener() {
+                @Override
+                public void receiveData(ByteBuf byteBuf) {
+                    Log.d("--------------------","-------串口数据---<<<<receiveData>>>>----");
+                    String dats =  ByteBufUtil.hexDump(byteBuf).toUpperCase();
+                    Log.d("--------------------","-------串口数据---<<<<<<<----"+dats);
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

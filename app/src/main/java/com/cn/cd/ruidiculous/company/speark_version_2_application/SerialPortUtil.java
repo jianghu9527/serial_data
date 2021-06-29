@@ -52,10 +52,7 @@ public class SerialPortUtil {
                 bean.Direction=true;
                 bean.Angle=135;
             }
-
         }
-
-
         return bean;
     }
 
